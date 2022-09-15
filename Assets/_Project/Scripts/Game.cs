@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class Game : MonoBehaviour
 {
    public Control Controls;
+    private AudioSource _audio;
+
    public enum State
     {
         Playing,
@@ -21,7 +23,10 @@ public class Game : MonoBehaviour
         currentState = State.Loss;
         Controls.enabled = false;
         Debug.Log("Game over");
-        ReloadLevel();
+        _audio = GetComponent<AudioSource>();
+        GetComponent<AudioSource>().Play();
+        StartCoroutine(ReloadLevel(1.5f));
+        
     }
 
     public void OnPlayerReachedFinish()
@@ -31,11 +36,12 @@ public class Game : MonoBehaviour
         Controls.enabled = false;
         LevelIndex++;
         Debug.Log("You win");
-        ReloadLevel();
+        StartCoroutine(ReloadLevel(1.5f));
     }
 
-    private void ReloadLevel()
+    private IEnumerator ReloadLevel(float time)
     {
+        yield return new WaitForSeconds(time);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     public int LevelIndex
